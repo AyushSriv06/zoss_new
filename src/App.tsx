@@ -20,6 +20,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Products from "./pages/dashboard/Products";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminUserDetail from "./pages/admin/AdminUserDetail";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,11 @@ const App = () => (
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/user/:userId" element={
+              <ProtectedRoute>
+                <AdminUserDetail />
               </ProtectedRoute>
             } />
 

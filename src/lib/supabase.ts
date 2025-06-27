@@ -15,6 +15,7 @@ export interface User {
   name: string | null
   email: string | null
   phone: string | null
+  role: 'admin' | 'superadmin' | 'consumer'
   created_at: string
   updated_at: string
 }
@@ -40,6 +41,7 @@ export interface UserProduct {
   created_at: string
   updated_at: string
   master_product?: MasterProduct
+  services?: Service[]
 }
 
 export interface Service {

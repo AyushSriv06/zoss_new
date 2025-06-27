@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const location = useLocation();
-  const { user, userProfile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const navigationItems = [
@@ -22,15 +23,16 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const handleSignOut = async () => {
+    setSigningOut(true);
     try {
-      console.log('🚪 Header: Sign-out button clicked, initiating sign-out...');
       await signOut();
-      console.log('✅ Header: Sign-out completed, navigating to login...');
       toast.success('Successfully signed out!');
       navigate("/login");
     } catch (error) {
-      console.error('❌ Header: Sign-out failed:', error);
+      console.error('Sign out error:', error);
       toast.error('Failed to sign out. Please try again.');
+    } finally {
+      setSigningOut(false);
     }
   };
 
@@ -76,15 +78,20 @@ const Header = () => {
                 <Link to="/dashboard">
                   <Button variant="ghost" className="flex items-center space-x-2">
                     <User className="h-4 w-4" />
-                    <span>{userProfile?.name || 'Dashboard'}</span>
+                    <span>{user.user_metadata?.name || user.email || 'Dashboard'}</span>
                   </Button>
                 </Link>
                 <Button 
                   onClick={handleSignOut}
                   variant="outline"
                   size="sm"
+                  disabled={signingOut}
                 >
-                  Sign Out
+                  {signingOut ? (
+                    <span className="flex items-center"><span className="animate-spin rounded-full h-4 w-4 border-b-2 border-zoss-green mr-2"></span>Signing Out...</span>
+                  ) : (
+                    'Sign Out'
+                  )}
                 </Button>
               </div>
             ) : (
@@ -148,8 +155,13 @@ const Header = () => {
                       onClick={handleSignOut}
                       variant="ghost"
                       className="w-full"
+                      disabled={signingOut}
                     >
-                      Sign Out
+                      {signingOut ? (
+                        <span className="flex items-center"><span className="animate-spin rounded-full h-4 w-4 border-b-2 border-zoss-green mr-2"></span>Signing Out...</span>
+                      ) : (
+                        'Sign Out'
+                      )}
                     </Button>
                   </>
                 ) : (

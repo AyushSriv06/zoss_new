@@ -13,7 +13,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signUpWithEmail, signInWithGoogle } = useAuth()
+  const { signUp, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
 
   const handleEmailSignup = async (e: React.FormEvent) => {
@@ -21,7 +21,7 @@ const SignupForm = () => {
     setLoading(true)
 
     try {
-      await signUpWithEmail(email, password, name)
+      await signUp(email, password, name)
       toast.success('Account created successfully! Please check your email to verify your account.')
       navigate('/login')
     } catch (error: any) {

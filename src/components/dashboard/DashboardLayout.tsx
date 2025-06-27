@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom'
+import { Link, useLocation, Outlet, useNavigate, Navigate } from 'react-router-dom'
 import { 
   Home, 
   Package, 
@@ -12,11 +12,22 @@ import {
   User
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useState } from 'react'
 
 const DashboardLayout = () => {
-  const { userProfile, signOut, isAdmin } = useAuth()
+  const { user, userProfile, signOut } = useAuth()
+  const [signingOut, setSigningOut] = useState(false);
   const location = useLocation()
   const navigate = useNavigate()
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Redirect admin or superadmin to admin dashboard
+  if (userProfile?.role === 'admin' || userProfile?.role === 'superadmin') {
+    return <Navigate to="/admin" replace />;
+  }
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -29,15 +40,16 @@ const DashboardLayout = () => {
   const isActive = (path: string) => location.pathname === path
 
   const handleSignOut = async () => {
+    setSigningOut(true);
     try {
-      console.log('🚪 DashboardLayout: Sign-out button clicked, initiating sign-out...');
       await signOut()
-      console.log('✅ DashboardLayout: Sign-out completed, navigating to login...');
-      toast.success('Successfully signed out!');
+      toast.success('Successfully signed out!')
       navigate('/login')
     } catch (error) {
-      console.error('❌ DashboardLayout: Sign-out failed:', error);
-      toast.error('Failed to sign out. Please try again.');
+      console.error('Sign out error:', error)
+      toast.error('Failed to sign out. Please try again.')
+    } finally {
+      setSigningOut(false);
     }
   }
 
@@ -79,21 +91,6 @@ const DashboardLayout = () => {
                 </Link>
               )
             })}
-
-            {isAdmin && (
-              <div className="pt-4 mt-4 border-t">
-                <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Admin
-                </p>
-                <Link
-                  to="/admin"
-                  className="mt-2 flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <Settings className="mr-3 h-5 w-5" />
-                  Admin Panel
-                </Link>
-              </div>
-            )}
           </nav>
 
           {/* User info and logout */}
@@ -104,10 +101,10 @@ const DashboardLayout = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {userProfile?.name || 'User'}
+                  {user?.user_metadata?.name || user?.email || 'User'}
                 </p>
                 <p className="text-xs text-gray-500 truncate">
-                  {userProfile?.email}
+                  {user?.email}
                 </p>
               </div>
             </div>
@@ -116,9 +113,13 @@ const DashboardLayout = () => {
               variant="outline"
               size="sm"
               className="w-full"
+              disabled={signingOut}
             >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
+              {signingOut ? (
+                <span className="flex items-center"><span className="animate-spin rounded-full h-4 w-4 border-b-2 border-zoss-green mr-2"></span>Signing Out...</span>
+              ) : (
+                <><LogOut className="mr-2 h-4 w-4" />Sign Out</>
+              )}
             </Button>
           </div>
         </div>

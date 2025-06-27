@@ -12,7 +12,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signInWithEmail, signInWithGoogle } = useAuth()
+  const { signIn, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -20,7 +20,7 @@ const LoginForm = () => {
     setLoading(true)
 
     try {
-      await signInWithEmail(email, password)
+      await signIn(email, password)
       toast.success('Successfully logged in!')
       navigate('/dashboard')
     } catch (error: any) {
