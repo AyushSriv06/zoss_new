@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { user, userProfile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navigationItems = [
     { name: "Home", path: "/" },
@@ -18,6 +19,15 @@ const Header = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate("/login");
+    } catch (error) {
+      // Optionally show an error toast
+    }
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-gray-100">
@@ -65,7 +75,7 @@ const Header = () => {
                   </Button>
                 </Link>
                 <Button 
-                  onClick={signOut}
+                  onClick={handleSignOut}
                   variant="outline"
                   size="sm"
                 >
@@ -130,7 +140,7 @@ const Header = () => {
                       </Button>
                     </Link>
                     <Button 
-                      onClick={signOut}
+                      onClick={handleSignOut}
                       variant="ghost"
                       className="w-full"
                     >

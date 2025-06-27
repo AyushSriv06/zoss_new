@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { Link, useLocation, Outlet } from 'react-router-dom'
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom'
 import { 
   Home, 
   Package, 
@@ -15,6 +15,7 @@ import {
 const DashboardLayout = () => {
   const { userProfile, signOut, isAdmin } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -25,6 +26,15 @@ const DashboardLayout = () => {
   ]
 
   const isActive = (path: string) => location.pathname === path
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      navigate('/login')
+    } catch (error) {
+      // Optionally show an error toast
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -97,7 +107,7 @@ const DashboardLayout = () => {
               </div>
             </div>
             <Button
-              onClick={signOut}
+              onClick={handleSignOut}
               variant="outline"
               size="sm"
               className="w-full"
