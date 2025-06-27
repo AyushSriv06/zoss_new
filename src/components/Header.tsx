@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from 'sonner';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,10 +23,14 @@ const Header = () => {
 
   const handleSignOut = async () => {
     try {
+      console.log('🚪 Header: Sign-out button clicked, initiating sign-out...');
       await signOut();
+      console.log('✅ Header: Sign-out completed, navigating to login...');
+      toast.success('Successfully signed out!');
       navigate("/login");
     } catch (error) {
-      // Optionally show an error toast
+      console.error('❌ Header: Sign-out failed:', error);
+      toast.error('Failed to sign out. Please try again.');
     }
   };
 

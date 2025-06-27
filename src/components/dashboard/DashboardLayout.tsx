@@ -11,6 +11,7 @@ import {
   Bell,
   User
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const DashboardLayout = () => {
   const { userProfile, signOut, isAdmin } = useAuth()
@@ -29,10 +30,14 @@ const DashboardLayout = () => {
 
   const handleSignOut = async () => {
     try {
+      console.log('🚪 DashboardLayout: Sign-out button clicked, initiating sign-out...');
       await signOut()
+      console.log('✅ DashboardLayout: Sign-out completed, navigating to login...');
+      toast.success('Successfully signed out!');
       navigate('/login')
     } catch (error) {
-      // Optionally show an error toast
+      console.error('❌ DashboardLayout: Sign-out failed:', error);
+      toast.error('Failed to sign out. Please try again.');
     }
   }
 
